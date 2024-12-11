@@ -47,32 +47,97 @@ public class BST {
      * @return true if val is in the tree, false otherwise
      */
     public boolean search(int val) {
-        // TODO: Complete the search function
-        return false;
+        //return the search helper function with the root and value
+        return searchHelp(val, root);
+    }
+
+    public boolean searchHelp(int val, BSTNode node)
+    {
+        //check if there is a node
+        if (node == null)
+        {
+            return false;
+        }
+        //then check if is equal to val, if so, you found it!
+        if (node.getVal() == val)
+        {
+            return true;
+        }
+        //now if the val is less than the node, recall search help on the left node
+        if (val < node.getVal())
+        {
+            return searchHelp(val, node.getLeft());
+        }
+        //otherwise, call search help on the right node
+        return searchHelp(val, node.getRight());
     }
 
     /**
      * @return ArrayList of BSTNodes in inorder
      */
     public ArrayList<BSTNode> getInorder() {
-        // TODO: Complete inorder traversal
-        return null;
+        //create arraylist and call helper
+        ArrayList<BSTNode> tree = new ArrayList<BSTNode>();
+        helpInOrder(root, tree);
+        return tree;
     }
+    public void helpInOrder(BSTNode node, ArrayList<BSTNode> tree)
+    {
+        //if you have reached a null child, return back to the parent
+        if (node == null)
+        {
+            return;
+        }
+        //if there is a valid node add its left child, then itself (the root), then its right child
+        helpInOrder(node.getLeft(), tree);
+        tree.add(node);
+        helpInOrder(node.getRight(), tree);
+    }
+
 
     /**
      * @return ArrayList of BSTNodes in preorder
      */
     public ArrayList<BSTNode> getPreorder() {
-        // TODO: Complete preorder traversal
-        return null;
+        //create arraylist and call helper
+        ArrayList<BSTNode> tree = new ArrayList<BSTNode>();
+        helpPreOrder(root, tree);
+        return tree;
     }
+    public void helpPreOrder(BSTNode node, ArrayList<BSTNode> tree)
+    {
+        //if you have reached a null child return
+        if (node == null)
+        {
+            return;
+        }
+        //if there is a valid node add itself (the root), then its left child then right child
+        tree.add(node);
+        helpPreOrder(node.getLeft(), tree);
+        helpPreOrder(node.getRight(), tree);
 
+
+
+    }
     /**
      * @return ArrayList of BSTNodes in postorder
      */
     public ArrayList<BSTNode> getPostorder() {
-        // TODO: Complete postorder traversal
-        return null;
+        //create arraylist and call helper
+        ArrayList<BSTNode> tree = new ArrayList<BSTNode>();
+        helpPostOrder(root, tree);
+        return tree;
+    }
+    public void helpPostOrder(BSTNode node, ArrayList<BSTNode> tree)
+    {
+        //if you have reached a null child return
+        if (node == null) {
+            return;
+        }
+        //if there is a valid node add its left child, then its right child then itself (the root)
+        helpPostOrder(node.getLeft(), tree);
+        helpPostOrder(node.getRight(), tree);
+        tree.add(node);
     }
 
     /**
@@ -82,7 +147,36 @@ public class BST {
      * @param val The value ot insert
      */
     public void insert(int val) {
-        // TODO: Complete insert
+        //if the value is not all ready in the tree, then add it
+        if(search(val))
+        {
+            return;
+        }
+        insertHelper(val, root);
+
+    }
+    public void insertHelper(int val, BSTNode node)
+    {
+        //if the val is less than the value of the node and the left child is null, add it
+        if(val < node.getVal())
+        {
+            if(node.getLeft() == null)
+            {
+                node.setLeft(new BSTNode(val));
+                return;
+            }
+            //if not null, recall helper function on left child
+            insertHelper(val, node.getLeft());
+            return;
+        }
+        //now the val is greater node, and right child does not exist add it
+        if(node.getRight() == null)
+        {
+            node.setRight(new BSTNode(val));
+            return;
+        }
+        //if not null, recall helper function on right child
+        insertHelper(val, node.getRight());
     }
 
     /**
@@ -91,7 +185,30 @@ public class BST {
      * @return true if valid false otherwise
      */
     public boolean isValidBST() {
-        // TODO: Optional Challenge!
+        //if there is no tree the tree is not valid
+        if (root == null)
+        {
+            return false;
+        }
+        //call helper function to determine if BST is valid
+        return isValidBSTHelper(root, Integer.MAX_VALUE, Integer.MIN_VALUE );
+    }
+    public boolean isValidBSTHelper(BSTNode node, int max, int min)
+    {
+        //base case: if you have reached the end of a branch and never been declared false, that branch is valid
+        if (node == null)
+        {
+            return true;
+        }
+        //if the node is less than the max and greater than the min
+        //then recall this function on its left and right nodes
+        if (node.getVal() < max && node.getVal() > min)
+        {
+            //declaring the nodes value as the max for left node, and min value for right node to ensure BST logic
+            return isValidBSTHelper(node.getLeft(), node.getVal(), min) &&
+                    isValidBSTHelper(node.getRight(), max, node.getVal());
+        }
+        //if the node is less than min or greater than max then it is not a valid BST
         return false;
     }
 
@@ -122,5 +239,9 @@ public class BST {
         System.out.println("\nInorder traversal of binary tree is");
         sol = tree.getInorder();
         printNodes(sol);
+
+
+        System.out.println("\n" + tree.isValidBST());
+
     }
 }
